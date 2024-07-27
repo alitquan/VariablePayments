@@ -5,22 +5,13 @@ import "./Table.module.css";
 const Table1 = ({ formData = {} }) => {
   console.log("FormData received in Table:", formData); // Debugging log
 
-  // Destructure and default to empty strings if not provided
+  // extracting values from formData prop and assigning empty string if no value was given
   const { amountDue = "", apr = "", inputValue = "" } = formData;
 
   // Parse values to numbers
   const principal = parseFloat(amountDue);
   const annualRate = parseFloat(apr) / 100;
   const monthlyPayment = parseFloat(inputValue);
-
-  console.log(
-    "Parsed values - Principal:",
-    principal,
-    "Annual Rate:",
-    annualRate,
-    "Monthly Payment:",
-    monthlyPayment
-  ); // Debugging log
 
   // Check for invalid input values
   if (
@@ -43,6 +34,7 @@ const Table1 = ({ formData = {} }) => {
   let totalAmountPaid = 0;
   const rows = [];
 
+  // will continue until the balance hit  < 0
   while (balance > 0) {
     monthNumber++;
     const interestPaid = balance * monthlyRate;
@@ -55,6 +47,7 @@ const Table1 = ({ formData = {} }) => {
 
     totalInterestPaid += interestPaid;
     totalAmountPaid = totalInterestPaid + principal;
+
     rows.push({
       month: monthNumber,
       monthlyPayment: monthlyPayment.toFixed(2),
@@ -66,7 +59,7 @@ const Table1 = ({ formData = {} }) => {
 
   return (
     <div className="table-container">
-      <h2>Loan Repayment Schedule</h2>
+      <h2>Credit Card Repayment Schedule</h2>
       <table>
         <thead>
           <tr>

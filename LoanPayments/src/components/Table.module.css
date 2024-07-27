@@ -9,7 +9,7 @@ table {
   margin: 20px 0;
   font-size: 18px;
   text-align: left;
-  color: white;
+  color: whitesmoke;
 }
 
 th,
@@ -24,4 +24,8 @@ th {
 
 tbody tr:nth-child(even) {
   background-color: var(--colorAli3);
+}
+table tbody tr:nth-last-child(1),
+table tbody tr:nth-last-child(2) {
+  background-color: lightcoral; /* Or any color you want */
 }
