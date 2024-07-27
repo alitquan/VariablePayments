@@ -1,6 +1,8 @@
 import { useState } from "react";
 import "./App.css";
+import Table2 from "./Table2.jsx";
 import Table1 from "./Table.jsx"; // Ensure this path is correct
+
 
 function App() {
   const [isOpen, setIsOpen] = useState(false); // used for dropdown
@@ -133,6 +135,7 @@ function App() {
         <button className="submit-btn" onClick={handleSubmit}>
           Submit
         </button>
+
         <button className="reset-btn" onClick={handleReset}>
           Reset
         </button>

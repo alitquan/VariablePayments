@@ -3,6 +3,13 @@
   --colorAli3: darkblue;
 }
 
+
+table tbody tr:nth-last-child(1),
+table tbody tr:nth-last-child(2) {
+  background-color: lightcoral; /* Or any color you want */
+}
+
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -25,7 +32,20 @@ th {
 tbody tr:nth-child(even) {
   background-color: var(--colorAli3);
 }
-table tbody tr:nth-last-child(1),
-table tbody tr:nth-last-child(2) {
-  background-color: lightcoral; /* Or any color you want */
+
+
+.rowButton{
+  background-color: purple;
+  text-align: center;
+  padding: 5px 0;
+
+  
+  button {
+	  margin: 0 auto;
+	  height: 30px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+  }
 }
+
