@@ -1,0 +1,26 @@
+:root {
+	--colorAli2: #062a64;  
+	--colorAli3: #ffbcd9; 
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 18px;
+  text-align: left;
+  color: black;
+}
+
+th, td {
+  border: 1px solid var(--colorAli2);
+  padding: 8px;
+}
+
+th {
+  background-color: var(--colorAli3);
+}
+
+tbody tr:nth-child(even) {
+  background-color: var(--colorAli3);
+}
