@@ -25,6 +25,7 @@ export function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
       };
       paymentDetails.push(monthDetails);
   
+
       if (remainingBalance <= 0) {
         paymentDetails.push({
           message: 'Balance fully paid off!',
@@ -41,7 +42,9 @@ export function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
     return jsonString;
   }
   
+
 export function variableMonthlyPayments(remainingBalance, apr, monthlyPayment) {
+
     let totalInterestPaid = 0;
     let monthlyRate = apr / 12 / 100; // Monthly interest rate as a decimal
     const paymentDetails = [];
@@ -77,9 +80,6 @@ export function variableMonthlyPayments(remainingBalance, apr, monthlyPayment) {
   }
 
 
-
-
-  
 
 
 
