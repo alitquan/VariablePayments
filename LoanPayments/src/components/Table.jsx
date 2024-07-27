@@ -2,25 +2,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import "./Table.module.css";
 
-const data = [
-  {
-    month: 1,
-    monthlyPayment: 100,
-    interestPaid: 25,
-    principalPaid: 75,
-    remainingBalance: 925,
-    totalInterestPaid: 25,
-  },
-  {
-    month: 2,
-    monthlyPayment: 100,
-    interestPaid: 23.12,
-    principalPaid: 76.88,
-    remainingBalance: 848.12,
-    totalInterestPaid: 48.12,
-  },
-];
-
 const Table1 = ({ formData = {} }) => {
   console.log("FormData received in Table:", formData); // Debugging log
 

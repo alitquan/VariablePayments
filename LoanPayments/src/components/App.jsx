@@ -3,8 +3,10 @@ import "./App.css";
 import Table1 from "./Table.jsx"; // Ensure this path is correct
 
 function App() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState(null);
+  const [isOpen, setIsOpen] = useState(false); // used for dropdown
+  const [selectedOption, setSelectedOption] = useState(null); // used for dropdown
+
+  // useState for all the data
   const [formData, setFormData] = useState({
     amountDue: "",
     apr: "",
@@ -22,6 +24,7 @@ function App() {
     setIsOpen(false);
   };
 
+  // Grab and update the data passed
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setFormData({
@@ -30,6 +33,7 @@ function App() {
     });
   };
 
+  // What happens when submit button is clicked
   const handleSubmit = () => {
     if (!formData.amountDue || !formData.apr || !formData.inputValue) {
       console.error("Form data is incomplete");
@@ -39,6 +43,7 @@ function App() {
     setShowTable(true); // Show the table when form is submitted
   };
 
+  // used to reset the fields once reset button is clicked
   const handleReset = () => {
     setFormData({
       amountDue: "",
@@ -59,7 +64,7 @@ function App() {
       <div className="container">
         <div className="input-amount">
           <h2>Amount Due </h2>
-          <input
+          <input // Input field for Total Amount
             type="text"
             name="amountDue"
             value={formData.amountDue}
@@ -68,7 +73,7 @@ function App() {
         </div>
         <div className="input-apr">
           <h2>Yearly APR</h2>
-          <input
+          <input // Input field for Yearly APR
             type="text"
             name="apr"
             value={formData.apr}
