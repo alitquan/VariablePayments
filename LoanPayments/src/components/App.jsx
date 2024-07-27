@@ -112,7 +112,7 @@ function App() {
           )}
           {selectedOption === "Pick Amount Month by Month" && (
             <div className="input-container-2">
-              <Table2 />
+              <Table2 formData={formData} />
             </div>
           )}
         </div>
@@ -125,9 +125,7 @@ function App() {
         </button>
         {showTable && <Table1 formData={formData} />}
       </div>
-      <Table2 />
     </>
-    
   );
 }
 
