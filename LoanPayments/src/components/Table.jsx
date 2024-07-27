@@ -1,21 +1,6 @@
 import React from 'react'
-import styles from './Table.module.css'
-import { useMemo, useState } from 'react';
-import {
-  MaterialReactTable,
-  createRow,
-  useMaterialReactTable,
-} from 'material-react-table';
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Tooltip,
-} from '@mui/material';
-
+import { useState } from 'react'
+import './Table.module.css' 
 
  
 const data = [
@@ -39,85 +24,35 @@ const data = [
 ];
 
 
-const Table = () =>  { 
-	const columns = useMemo(
-		() => [
-			{
-				accessorKey: 'month', 
-				header: 'Month',
-				size: 150,
-				Edit: () => null, 
-			},
-			{
-				accessorKey: 'monthlyPayment',
-				header: 'Monthly Payment',
-				size: 150,
-			},
-			{
-				accessorKey: 'interestPaid', 
-				header: 'Interest Paid',
-				size: 200,
-				Edit: () => null, 
-			},
-			{
-				accessorKey: 'principalPaid',
-				header: 'Principal Paid',
-				size: 150,
-				Edit: () => null, 
-			},
-			{
-				accessorKey: 'remainingBalance',
-				header: 'Remaining Balance',
-				size: 150,
-				Edit: () => null, 
-			},
-			{
 
-				accessorKey: 'totalInterestPaid',
-				header: 'Total Interest Paid',
-				size: 150,
-				Edit: () => null, 
-			},
-		],
-		[],
+const Table = () => {
+	return (
+		<table>
+		<thead>
+		<tr>
+			<th>Month</th>
+			<th>Monthly Payment</th>
+			<th>Interest Paid</th>
+			<th>Principal Paid</th>
+			<th>Remaining Balance</th>
+			<th>Total Interest Paid</th>
+		</tr>
+		</thead>
+		<tbody>
+		{data.map((row, index) => (
+			<tr key={index}>
+			<td>{row.month}</td>
+			<td>{row.monthlyPayment}</td>
+			<td>{row.interestPaid}</td>
+			<td>{row.principalPaid}</td>
+			<td>{row.remainingBalance}</td>
+			<td>{row.totalInterestPaid}</td>
+			</tr>
+		))}
+		</tbody>
+		</table>
 	);
-
-	const table = useMaterialReactTable({
-		columns,
-		data,
-		enableEditing: true,
-		createDisplayMode: 'modal',
-		editDisplayMode: 'modal',
-
-		onCreatingRowSave: ({ table, values }) => {
-			table.setCreatingRow(null); 
-		},
-		onCreatingRowCancel: () => {
-		},
-		renderTopToolbarCustomActions: ({ table }) => (
-			<Button
-			onClick={() => {
-				console.log ("saved");
-				table.setCreatingRow(
-					createRow(table, {
-						month: 10,
-						monthlyPayment:5, 
-						interestPaid:5, 
-						principalPaid:5, 
-						remainingBalance:5, 
-						totalInterestPaid:5, 
-					}),
-				);
-				console.log("saved2");
-			}}
-			>
-			Create New User
-			</Button>
-		),
-	});
-
-return <MaterialReactTable table={table} />;
-}
+};
 
 
-export default Table;
+export default Table; 
