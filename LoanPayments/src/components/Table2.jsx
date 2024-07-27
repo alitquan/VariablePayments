@@ -13,7 +13,7 @@ const Table2 = ( { formData = {} }) => {
  const initialData = [
   {
     month: 0,
-    monthlyPayment: 0,
+    monthlyPayment: 5,
     interestPaid: 0, 
     principalPaid: 0,
     remainingBalance: formData["amountDue"],
@@ -33,12 +33,12 @@ const Table2 = ( { formData = {} }) => {
   
 
   useEffect(() => {
-   console.log("formData on render:", formData);
-   console.log("APR: ",formData["apr"]);
-   console.log("type of data: ", typeof formData["apr"]);
+   // console.log("formData on render:", formData);
+   // console.log("APR: ",formData["apr"]);
+   // console.log("type of data: ", typeof formData["apr"]);
    const apr = parseFloat(formData["apr"])
-   console.log("stored APR: ", apr);
-   console.log("type of data: ", typeof apr);
+   // console.log("stored APR: ", apr);
+   // console.log("type of data: ", typeof apr);
   }, [formData]);
 
   useEffect(() => {
@@ -67,13 +67,14 @@ const Table2 = ( { formData = {} }) => {
     const prevRow = getMostRecentRow();
     const _apr = parseFloat(formData["apr"]);
     console.log ("Detected APR: ", _apr);
-    console.log ("Previous Row: ", prevRow);
-    console.log ("Previous Row Interest Rate: ", prevRow["totalInterestPaid"]);
-    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, 100));
+    console.log ("HandleAddRow -- Previous Row: ", prevRow);
+    console.log ("HandleAddRow -- Previous Row Interest Rate: ", prevRow["totalInterestPaid"]);
+    const _prevPayment = prevRow ["monthlyPayment"];
+    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, _prevPayment));
     const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
     const _prevInterest =  prevRow["totalInterestPaid"];
     const totalInterest =  _prevInterest + _interestPaid;
-    const _prevPayment = prevRow ["monthlyPayment"];
+    
     const newRow = {
       month: data.length,
       monthlyPayment: _prevPayment,
@@ -98,21 +99,18 @@ const Table2 = ( { formData = {} }) => {
    
 
     if (value === '' || isNaN(value)) {
-      setError('Monthly payment cannot be empty or non-numeric');
+      console.log("test");
     } else if (parseFloat(value) < 0) {
-      setError('Monthly payment cannot be negative');
+      console.log("test");
     } else {
-
-
-
 
       setError('');
       const updatedData = data.map((row, rowIndex) => {
         if (rowIndex === index) {
 
           const prevRow = getMostRecentRow();
-          const calculations = JSON.parse(variableMonthlyPayments(row['remainingBalance'], _apr, value));
-
+	  console.log("handleMonthly -- prevRow: ", prevRow);
+          const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, value));
           const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
           const _prevInterest =  prevRow["totalInterestPaid"];
           const totalInterest =  _prevInterest + _interestPaid;
@@ -134,8 +132,9 @@ const Table2 = ( { formData = {} }) => {
 
   const getMostRecentRow = () => {
     return data.length ? data[data.length - 1] : null;
-
   };
+   
+   
 
   const input2ndtoLastRow = () => {
     const table = tableRef.current;
@@ -212,13 +211,9 @@ const Table2 = ( { formData = {} }) => {
         <tr>
 
           <td className={styles.rowButton} colSpan="6">
-            {shouldShowAddButton() ? (
+          {
               <button onClick={handleAddRow} id={styles.addButton}> + </button>
-            ) :
-	    (
-              <button  id={styles.addButton}> Done </button>
-	    )
-	    }
+	  }
           </td>
         </tr>
 

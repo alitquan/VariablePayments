@@ -49,5 +49,15 @@ tbody tr:nth-child(even) {
 	  justify-content: center;
 	  background-color: #6f86d6;
   }
+  p {
+	  margin: 0 auto;
+	  height: 50px;
+	  font-size: 20px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  background-color: var(--colorAli2);
+  }
+ 
 }
 
