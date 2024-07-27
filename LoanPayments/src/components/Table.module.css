@@ -24,3 +24,23 @@ th {
 tbody tr:nth-child(even) {
   background-color: var(--colorAli3);
 }
+
+.rowButton{
+  background-color: purple;
+  text-align: center;
+  padding: 5px 0;
+
+  
+  button {
+	  margin: 0 auto;
+	  height: 30px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+  }
+}
+
+#lastRow {
+
+}
+
