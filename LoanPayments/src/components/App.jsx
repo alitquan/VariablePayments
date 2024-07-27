@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import Table2 from "./Table2.jsx";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -119,6 +120,8 @@ function App() {
         <button className="submit-btn" onClick={handleSubmit}>
           Submit
         </button>
+	
+	<Table2 />
       </div>
     </>
   );
