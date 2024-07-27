@@ -22,6 +22,9 @@ const initialData = [
 
 const Table2 = () => {
 	const [data, setData] = useState(initialData);
+
+	// error tracking
+	const [error, setError] = useState('');
 	
 	// reference to the table itself
 	const tableRef = useRef(null);
@@ -29,6 +32,8 @@ const Table2 = () => {
 		const table = tableRef.current;
 		console.log(table); // This should log the table element after the component has mounted
 	}, []);
+
+
 	const [newRowAdded, setNewRowAdded] = useState(false);
 
 
@@ -85,29 +90,42 @@ const Table2 = () => {
 	};
 
 	const handleMonthlyPaymentChange = (index, value) => {
-		const updatedData = data.map((row, rowIndex) => {
-			if (rowIndex === index) {
-				console.log("this is the row: ", row);
-				const calculations = JSON.parse( variableMonthlyPayments( 
-					row['remainingBalance'],
-					5,
-					value	
-				));
-				const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
-				const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
-				const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
+		if (value === '' || isNaN(value)) {
+			setError('Monthly payment cannot be empty or non-numeric');
+		}
+		else if (value == null || parseFloat(value) < 0) {
+			setError('Monthly payment cannot be negative');
+		}
+		else {
+			setError('');
+			const updatedData = data.map((row, rowIndex) => {
+				if (rowIndex === index) {
+					console.log("this is the row: ", row);
+
+					// for comparisons
+					const _remBal = row['remainingBalance'];
+
+					const calculations = JSON.parse( variableMonthlyPayments( 
+						row['remainingBalance'],
+						5,
+						value	
+					));
+					const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
+					const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
+					const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
 
 
-				return { ...row, 
-					monthlyPayment: value,
-					interestPaid: interestPaidNum,
-					principalPaid: principalPaidNum,
-					remainingBalance: remainingBalanceNum,};
-			}
-			return row;
-		});
-		console.log ("updatedData: ", updatedData);
-		setData(updatedData);
+					return { ...row, 
+						monthlyPayment: value,
+						interestPaid: interestPaidNum,
+						principalPaid: principalPaidNum,
+						remainingBalance: remainingBalanceNum,};
+				}
+				return row;
+			});
+			console.log ("updatedData: ", updatedData);
+			setData(updatedData);
+		}
 	};
 
 
@@ -150,11 +168,14 @@ const Table2 = () => {
 			<td>{row.month}</td>
 			<td>
 			{editableRow === index ? (
-				<input
-					type="text"
-					value={row.monthlyPayment}
-					onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
-				/>
+				<>
+					<input
+						type="text"
+						value={row.monthlyPayment}
+						onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
+					/>
+					{error && <div className={styles.printedError}>{error}</div>}
+				</>
 			) : (
 				row.monthlyPayment
 			)}

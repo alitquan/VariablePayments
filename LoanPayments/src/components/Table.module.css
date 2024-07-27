@@ -33,6 +33,10 @@ tbody tr:nth-child(even) {
   background-color: var(--colorAli3);
 }
 
+.printedError {
+	color: red; 
+	font-size: 14px;
+}
 
 .rowButton{
   background-color: purple;
