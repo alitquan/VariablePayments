@@ -73,9 +73,10 @@ const Table2 = ( { formData = {} }) => {
     const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
     const _prevInterest =  prevRow["totalInterestPaid"];
     const totalInterest =  _prevInterest + _interestPaid;
+    const _prevPayment = prevRow ["monthlyPayment"];
     const newRow = {
       month: data.length,
-      monthlyPayment: 100,
+      monthlyPayment: _prevPayment,
       interestPaid: _interestPaid,
       principalPaid: parseFloat(calculations[0]["principalPaid"]),
       remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
@@ -157,6 +158,12 @@ const Table2 = ( { formData = {} }) => {
     }
   };
 
+ // determines if button should be shown based on remaining balance
+  const shouldShowAddButton = () => {
+    const lastRow = getMostRecentRow();
+    return lastRow && lastRow.remainingBalance > 0;
+  };
+
   return (
     <table ref={tableRef}>
       <thead>
@@ -203,8 +210,15 @@ const Table2 = ( { formData = {} }) => {
           </tr>
         ))}
         <tr>
-          <td  className={styles.rowButton} colSpan="6">
-            <button onClick={handleAddRow} id={styles.addButton}> + </button>
+
+          <td className={styles.rowButton} colSpan="6">
+            {shouldShowAddButton() ? (
+              <button onClick={handleAddRow} id={styles.addButton}> + </button>
+            ) :
+	    (
+              <button  id={styles.addButton}> Done </button>
+	    )
+	    }
           </td>
         </tr>
 
