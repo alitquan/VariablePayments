@@ -1,7 +1,10 @@
 import React from 'react'
 import { useState } from 'react'
 import styles from './Table.module.css' 
-
+import {
+	fixedMonthlyPayments,
+	variableMonthlyPayments
+} from '../calculation.js' 
  
 const initialData = [
 	{
@@ -19,19 +22,46 @@ const initialData = [
 
 const Table2 = () => {
 	const [data, setData] = useState(initialData);
+	
+	const payment = 100;
 
 	 // Function to add a new row to the table
 	const handleAddRow = () => {
+		const prevRow = getMostRecentRow(); 
+		console.log("Prev Row: ", prevRow);
+		const calculations = JSON.parse( variableMonthlyPayments( 
+			prevRow['remainingBalance'],
+			5,
+			payment 
+		));
+		
+		console.log("calculations", calculations[0]);
+		console.log("calculations - interest paid", calculations[0]["interestPaid"]);
+		// Convert values to numbers for calculations
+		const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
+		const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
+		const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
+		const totalInterestPaidNum = parseFloat(calculations[0]["totalInterestPaid"]);
 		const newRow = {
 			month: data.length,
-			monthlyPayment: 0,
-			interestPaid: 0,
-			principalPaid: 0,
-			remainingBalance: 1000 - data.length * 100, // Example calculation
+			monthlyPayment: payment,
+			interestPaid: interestPaidNum,
+			principalPaid: principalPaidNum,
+			remainingBalance: remainingBalanceNum,// Example calculation
 			totalInterestPaid: data.length * 10, // Example calculation
 		};
+
 		setData([...data, newRow]); // Update state with new row added
 	};
+
+
+	const getMostRecentRow = () => {
+		if (data.length === 0) {
+			return null;
+		}
+		return data[data.length - 1];
+	};
+
 
 	return (
 		<table>

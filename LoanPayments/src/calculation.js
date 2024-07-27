@@ -1,4 +1,4 @@
-function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
+export function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
     let remainingBalance = initialBalance;
     let totalInterestPaid = 0;
     let monthlyRate = apr / 12 / 100; // Monthly interest rate as a decimal
@@ -15,7 +15,7 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
       if (remainingBalance < 0) {
         remainingBalance = 0;
       }
-  
+
       const monthDetails = {
         month,
         interestPaid: interestPaid.toFixed(2),
@@ -41,7 +41,7 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
     return jsonString;
   }
   
-  function variableMonthlyPayments(remainingBalance, apr, monthlyPayment) {
+export function variableMonthlyPayments(remainingBalance, apr, monthlyPayment) {
     let totalInterestPaid = 0;
     let monthlyRate = apr / 12 / 100; // Monthly interest rate as a decimal
     const paymentDetails = [];
@@ -75,6 +75,9 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
     //console.log('Variable payment details JSON string:', jsonString);
     return jsonString;
   }
+
+
+
 
   
 
