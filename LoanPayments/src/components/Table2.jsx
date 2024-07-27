@@ -1,186 +1,168 @@
-import React from 'react'
-import { useState, useRef, useEffect } from 'react'
-import styles from './Table.module.css' 
-import {
-	fixedMonthlyPayments,
-	variableMonthlyPayments
-} from '../calculation.js' 
- 
-const initialData = [
-	{
-		month: 0,
-		monthlyPayment: 0,
-		interestPaid: 0, 
-		principalPaid: 0,
-		remainingBalance: 1000,
-		totalInterestPaid: 0,
-	},
+import React, { useState, useRef, useEffect } from 'react';
+import styles from './Table.module.css';
+import { variableMonthlyPayments } from '../calculation.js';
 
+const initialData = [
+  {
+    month: 0,
+    monthlyPayment: 0,
+    interestPaid: 0, 
+    principalPaid: 0,
+    remainingBalance: 1000,
+    totalInterestPaid: 0,
+  },
 ];
 
-
-
 const Table2 = () => {
-	const [data, setData] = useState(initialData);
-	
-	// reference to the table itself
-	const tableRef = useRef(null);
-	useEffect(() => {
-		const table = tableRef.current;
-		console.log(table); // This should log the table element after the component has mounted
-	}, []);
-	const [newRowAdded, setNewRowAdded] = useState(false);
+  const [data, setData] = useState(initialData);
+  const [error, setError] = useState('');
+  const [newRowAdded, setNewRowAdded] = useState(false);
+  const [editableRow, setEditableRow] = useState(null);
+  
+  const tableRef = useRef(null);
+  const inputRefs = useRef([]);
 
+  // Add new row when the data changes
+  useEffect(() => {
+    if (newRowAdded) {
+      input2ndtoLastRow();
+      setNewRowAdded(false);
+    }
+  }, [data, newRowAdded]);
 
-	useEffect(() => {
-		if (newRowAdded) {
-			input2ndtoLastRow();
-			setNewRowAdded(false);
-		}
-	}, [data, newRowAdded]);
+  // Handle clicks outside to exit edit mode
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (inputRefs.current && !inputRefs.current.some(ref => ref && ref.contains(event.target))) {
+        setEditableRow(null);
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
 
-	const [editableRow, setEditableRow] = useState(null);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
-	useEffect(() => {
-		if (newRowAdded) {
-			setEditableRow(data.length - 1);
-			setNewRowAdded(false);
-		}
-	}, [data, newRowAdded]);
+  const handleAddRow = () => {
+    const prevRow = getMostRecentRow();
+    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], 5, 100));
+    const newRow = {
+      month: data.length,
+      monthlyPayment: 100,
+      interestPaid: parseFloat(calculations[0]["interestPaid"]),
+      principalPaid: parseFloat(calculations[0]["principalPaid"]),
+      remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
+      totalInterestPaid: data.length * 10,
+    };
 
-	const payment = 100;
+    setData(prevData => {
+      const newData = [...prevData, newRow];
+      setNewRowAdded(true);
+      return newData;
+    });
+  };
 
-	 // Function to add a new row to the table
-	const handleAddRow = () => {
-		const prevRow = getMostRecentRow(); 
-		console.log("Prev Row: ", prevRow);
-		const calculations = JSON.parse( variableMonthlyPayments( 
-			prevRow['remainingBalance'],
-			5,
-			payment 
-		));
-		
-		console.log("calculations", calculations[0]);
-		console.log("calculations - interest paid", calculations[0]["interestPaid"]);
-		// Convert values to numbers for calculations
-		const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
-		const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
-		const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
-		const totalInterestPaidNum = parseFloat(calculations[0]["totalInterestPaid"]);
-		const newRow = {
-			month: data.length,
-			monthlyPayment: payment,
-			interestPaid: interestPaidNum,
-			principalPaid: principalPaidNum,
-			remainingBalance: remainingBalanceNum,// Example calculation
-			totalInterestPaid: data.length * 10, // Example calculation
-		};
+  const handleMonthlyPaymentChange = (index, value) => {
+    if (value === '' || isNaN(value)) {
+      setError('Monthly payment cannot be empty or non-numeric');
+    } else if (parseFloat(value) < 0) {
+      setError('Monthly payment cannot be negative');
+    } else {
+      setError('');
+      const updatedData = data.map((row, rowIndex) => {
+        if (rowIndex === index) {
+          const calculations = JSON.parse(variableMonthlyPayments(row['remainingBalance'], 5, value));
+          return { 
+            ...row, 
+            monthlyPayment: value,
+            interestPaid: parseFloat(calculations[0]["interestPaid"]),
+            principalPaid: parseFloat(calculations[0]["principalPaid"]),
+            remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
+          };
+        }
+        return row;
+      });
+      setData(updatedData);
+    }
+  };
 
-		setData(prevData => {
-			const newData = [...prevData, newRow];
-			setNewRowAdded(true);
-			return newData;
-		});
-	};
+  const getMostRecentRow = () => {
+    return data.length ? data[data.length - 1] : null;
+  };
 
-	const handleMonthlyPaymentChange = (index, value) => {
-		const updatedData = data.map((row, rowIndex) => {
-			if (rowIndex === index) {
-				console.log("this is the row: ", row);
-				const calculations = JSON.parse( variableMonthlyPayments( 
-					row['remainingBalance'],
-					5,
-					value	
-				));
-				const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
-				const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
-				const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
+  const input2ndtoLastRow = () => {
+    const table = tableRef.current;
+    if (table) {
+      const rows = table.getElementsByTagName('tr');
+      const secondToLastRow = rows[rows.length - 2];
+      if (secondToLastRow) {
+        secondToLastRow.scrollIntoView();
+      }
+    }
+  };
 
+  const handleCellClick = (index) => {
+    if (editableRow === index) {
+      setEditableRow(null);
+    } else {
+      setEditableRow(index);
+    }
+  };
 
-				return { ...row, 
-					monthlyPayment: value,
-					interestPaid: interestPaidNum,
-					principalPaid: principalPaidNum,
-					remainingBalance: remainingBalanceNum,};
-			}
-			return row;
-		});
-		console.log ("updatedData: ", updatedData);
-		setData(updatedData);
-	};
-
-
-	const getMostRecentRow = () => {
-		if (data.length === 0) {
-			return null;
-		}
-		return data[data.length - 1];
-	};
-
-	
-
-	const input2ndtoLastRow = () => {
-		const table = tableRef.current;
-		console.log("working");
-
-		if (table) {
-			console.log ("table here");
-			const rows = table.getElementsByTagName('tr');
-			const secondToLastRow = rows[rows.length-1];
-			console.log("second to last row: ", secondToLastRow); // You can do whatever you need with the second-to-last row here
-		}
-	};
-
-	return (
-		<table ref={tableRef}>
-		<thead>
-		<tr>
-			<th>Month</th>
-			<th>Monthly Payment</th>
-			<th>Interest Paid</th>
-			<th>Principal Paid</th>
-			<th>Remaining Balance</th>
-			<th>Total Interest Paid</th>
-		</tr>
-		</thead>
-		<tbody>
-		{data.map((row, index) => (
-			<tr key={index}>
-			<td>{row.month}</td>
-			<td>
-			{editableRow === index ? (
-				<input
-					type="text"
-					value={row.monthlyPayment}
-					onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
-				/>
-			) : (
-				row.monthlyPayment
-			)}
-			</td>
-			<td>{row.interestPaid}</td>
-			<td>{row.principalPaid}</td>
-			<td>{row.remainingBalance}</td>
-			<td>{row.totalInterestPaid}</td>
-			</tr>
-
-			// <tr key={index}>
-			// <td>{row.month}</td>
-			// <td>{row.monthlyPayment}</td>
-			// <td>{row.interestPaid}</td>
-			// <td>{row.principalPaid}</td>
-			// <td>{row.remainingBalance}</td>
-			// <td>{row.totalInterestPaid}</td>
-			// </tr>
-		))}
-		<td idName={styles.lastRow} className={styles.rowButton} colSpan="6" > 
-			<button onClick={handleAddRow} id={styles.addButton}> + </button> 
-		</td> 
-		</tbody>
-		</table>
-	);
+  return (
+    <table ref={tableRef}>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Monthly Payment</th>
+          <th>Interest Paid</th>
+          <th>Principal Paid</th>
+          <th>Remaining Balance</th>
+          <th>Total Interest Paid</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row, index) => (
+          <tr key={index}>
+            <td>{row.month}</td>
+            <td onClick={() => handleCellClick(index)}>
+              {editableRow === index ? (
+                <>
+                  <input
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    value={row.monthlyPayment}
+                    onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
+                    onBlur={() => setEditableRow(null)}
+                    style={{
+                      width: '80px',
+                      fontSize: '0.8em',
+                      padding: '5px'
+                    }}
+                    autoFocus
+                  />
+                  {error && <div className={styles.printedError}>{error}</div>}
+                </>
+              ) : (
+                row.monthlyPayment
+              )}
+            </td>
+            <td>{row.interestPaid}</td>
+            <td>{row.principalPaid}</td>
+            <td>{row.remainingBalance}</td>
+            <td>{row.totalInterestPaid}</td>
+          </tr>
+        ))}
+        <tr>
+          <td idName={styles.lastRow} className={styles.rowButton} colSpan="6">
+            <button onClick={handleAddRow} id={styles.addButton}> + </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  );
 };
 
-
-export default Table2; 
+export default Table2;
