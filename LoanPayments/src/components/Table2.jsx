@@ -87,7 +87,22 @@ const Table2 = () => {
 	const handleMonthlyPaymentChange = (index, value) => {
 		const updatedData = data.map((row, rowIndex) => {
 			if (rowIndex === index) {
-				return { ...row, monthlyPayment: value };
+				console.log("this is the row: ", row);
+				const calculations = JSON.parse( variableMonthlyPayments( 
+					row['remainingBalance'],
+					5,
+					value	
+				));
+				const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
+				const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
+				const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
+
+
+				return { ...row, 
+					monthlyPayment: value,
+					interestPaid: interestPaidNum,
+					principalPaid: principalPaidNum,
+					remainingBalance: remainingBalanceNum,};
 			}
 			return row;
 		});
