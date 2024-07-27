@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./App.css";
+import Table1 from "./Table.jsx"; // Ensure this path is correct
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,6 +11,7 @@ function App() {
     inputValue: "",
     month: "",
   });
+  const [showTable, setShowTable] = useState(false); // Add state to control table visibility
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -29,17 +31,24 @@ function App() {
   };
 
   const handleSubmit = () => {
-    console.log(formData);
+    if (!formData.amountDue || !formData.apr || !formData.inputValue) {
+      console.error("Form data is incomplete");
+      return;
+    }
+    console.log("Submitting data:", formData); // Debugging log
+    setShowTable(true); // Show the table when form is submitted
+  };
 
+  const handleReset = () => {
     setFormData({
       amountDue: "",
       apr: "",
       inputValue: "",
       month: "",
     });
-
     setSelectedOption(null);
     setIsOpen(false);
+    setShowTable(false); // Hide the table when resetting
   };
 
   const options = ["Pick Static Amount", "Pick Amount Month by Month"];
@@ -119,6 +128,10 @@ function App() {
         <button className="submit-btn" onClick={handleSubmit}>
           Submit
         </button>
+        <button className="reset-btn" onClick={handleReset}>
+          Reset
+        </button>
+        {showTable && <Table1 formData={formData} />}
       </div>
     </>
   );
