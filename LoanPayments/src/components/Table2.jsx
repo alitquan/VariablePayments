@@ -150,6 +150,27 @@ const Table2 = () => {
 		}
 	};
 
+
+
+	const inputRefs = useRef([]);
+
+	useEffect(() => {
+		// Function to handle click outside of the input
+		const handleClickOutside = (event) => {
+			if (inputRefs.current && !inputRefs.current.some(ref => ref && ref.contains(event.target))) {
+				setEditableRow(null);
+			}
+		};
+
+		// Attach event listener
+		document.addEventListener('mousedown', handleClickOutside);
+
+		// Cleanup event listener on component unmount
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
+
 	return (
 		<table ref={tableRef}>
 		<thead>
@@ -169,11 +190,18 @@ const Table2 = () => {
 			<td>
 			{editableRow === index ? (
 				<>
-					<input
-						type="text"
-						value={row.monthlyPayment}
-						onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
-					/>
+				<input
+					ref={(el) => (inputRefs.current[index] = el)}
+					type="text"
+					value={row.monthlyPayment}
+					onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
+					style={{
+						width: '80px', // Adjust width as needed
+						fontSize: '0.8em',
+						padding: '5px'
+					}}
+
+				/>
 					{error && <div className={styles.printedError}>{error}</div>}
 				</>
 			) : (
@@ -186,15 +214,7 @@ const Table2 = () => {
 			<td>{row.totalInterestPaid}</td>
 			</tr>
 
-			// <tr key={index}>
-			// <td>{row.month}</td>
-			// <td>{row.monthlyPayment}</td>
-			// <td>{row.interestPaid}</td>
-			// <td>{row.principalPaid}</td>
-			// <td>{row.remainingBalance}</td>
-			// <td>{row.totalInterestPaid}</td>
-			// </tr>
-		))}
+					))}
 		<td idName={styles.lastRow} className={styles.rowButton} colSpan="6" > 
 			<button onClick={handleAddRow} id={styles.addButton}> + </button> 
 		</td> 

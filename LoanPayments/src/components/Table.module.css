@@ -51,5 +51,12 @@ tbody tr:nth-child(even) {
 	  align-items: center;
 	  justify-content: center;
   }
+
+  /* YourStyles.module.css or your stylesheet */
+  .smallInput {
+	  width: 80px; /* Adjust width as needed */
+	  font-size: 0.8em; /* Adjust font size */
+	  display: inline-block; /* Ensure it stays inline */
+  }
 }
 
