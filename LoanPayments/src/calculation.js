@@ -3,6 +3,7 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
     let totalInterestPaid = 0;
     let monthlyRate = apr / 12 / 100; // Monthly interest rate as a decimal
     let month = 0;
+    const paymentDetails = [];
   
     while (remainingBalance > 0) {
       month++;
@@ -15,36 +16,36 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
         remainingBalance = 0;
       }
   
-      console.log(`Month: ${month}`);
-      console.log(`Interest Paid: $${interestPaid.toFixed(2)}`);
-      console.log(`Principal Paid: $${principalPaid.toFixed(2)}`);
-      console.log(`Remaining Principal: $${remainingBalance.toFixed(2)}`);
-      console.log(`Total Interest Paid: $${totalInterestPaid.toFixed(2)}`);
-      console.log('-------------------------');
-      
+      const monthDetails = {
+        month,
+        interestPaid: interestPaid.toFixed(2),
+        principalPaid: principalPaid.toFixed(2),
+        remainingBalance: remainingBalance.toFixed(2),
+        totalInterestPaid: totalInterestPaid.toFixed(2)
+      };
+      paymentDetails.push(monthDetails);
+  
       if (remainingBalance <= 0) {
-        console.log('Balance fully paid off!');
-        console.log(`Total months: ${month}`);
-        console.log(`Total interest paid: $${totalInterestPaid.toFixed(2)}`);
-        console.log(`Total amount paid: $${(totalInterestPaid + initialBalance).toFixed(2)}`);
+        paymentDetails.push({
+          message: 'Balance fully paid off!',
+          totalMonths: month,
+          totalInterestPaid: totalInterestPaid.toFixed(2),
+          totalAmountPaid: (totalInterestPaid + initialBalance).toFixed(2)
+        });
         break;
       }
-    }}
-
-
-   function variableMonthlyPayments(initialBalance, apr, monthlyPayment) {
-    let remainingBalance = initialBalance;
+    }
+  
+    const jsonString = JSON.stringify(paymentDetails, null, 2);
+    //console.log('Fixed payment details JSON string:', jsonString);
+    return jsonString;
+  }
+  
+  function variableMonthlyPayments(remainingBalance, apr, monthlyPayment) {
     let totalInterestPaid = 0;
     let monthlyRate = apr / 12 / 100; // Monthly interest rate as a decimal
-    
+    const paymentDetails = [];
 
-      if (remainingBalance <= 0) {
-        console.log('Balance already paid off');
-        console.log(`Total interest paid: $${totalInterestPaid.toFixed(2)}`);
-        console.log(`Total amount paid: $${(totalInterestPaid + initialBalance).toFixed(2)}`);
-        return;
-      }
-  
       let interestPaid = remainingBalance * monthlyRate;
       let principalPaid = monthlyPayment - interestPaid;
       remainingBalance -= principalPaid;
@@ -54,29 +55,28 @@ function fixedMonthlyPayments(initialBalance, apr, fixedMonthlyPayment) {
         remainingBalance = 0;
       }
   
-      console.log(`Interest Paid: $${interestPaid.toFixed(2)}`);
-      console.log(`Principal Paid: $${principalPaid.toFixed(2)}`);
-      console.log(`Remaining Principal: $${remainingBalance.toFixed(2)}`);
-      console.log(`Total Interest Paid: $${totalInterestPaid.toFixed(2)}`);
-      console.log('-------------------------');
-      
+      const monthDetails = {
+        interestPaid: interestPaid.toFixed(2),
+        principalPaid: principalPaid.toFixed(2),
+        remainingBalance: remainingBalance.toFixed(2),
+        totalInterestPaid: totalInterestPaid.toFixed(2)
+      };
+      paymentDetails.push(monthDetails);
+  
       if (remainingBalance <= 0) {
-        console.log('Balance fully paid off!');
-        console.log(`Total interest paid: $${totalInterestPaid.toFixed(2)}`);
-        console.log(`Total amount paid: $${(totalInterestPaid + initialBalance).toFixed(2)}`);
-        return;
+        paymentDetails.push({
+          message: 'Balance fully paid off!',
+        });
+        
       }
-
+    
+  
+    const jsonString = JSON.stringify(paymentDetails, null, 2);
+    //console.log('Variable payment details JSON string:', jsonString);
+    return jsonString;
   }
 
-  async function main() {
-    let initialBalance = 1000; // Replace with the actual initial balance
-    let apr = 10; // Replace with the actual APR
-    fixedMonthlyPayments(1000, 10, 100);
-    let monthlyPayments= [100, 200, 300, 400, 500];
-    for (let i = 0; i < monthlyPayments.length; i++) {
-      variableMonthlyPayments(initialBalance, apr, monthlyPayments[i]);
-    }}
-  main();
-    
+  
+
+
 
