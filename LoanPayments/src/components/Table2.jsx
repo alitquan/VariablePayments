@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import styles from './Table.module.css' 
 import {
 	fixedMonthlyPayments,
@@ -23,6 +23,32 @@ const initialData = [
 const Table2 = () => {
 	const [data, setData] = useState(initialData);
 	
+	// reference to the table itself
+	const tableRef = useRef(null);
+	useEffect(() => {
+		const table = tableRef.current;
+		console.log(table); // This should log the table element after the component has mounted
+	}, []);
+	const [newRowAdded, setNewRowAdded] = useState(false);
+
+
+	useEffect(() => {
+		if (newRowAdded) {
+			input2ndtoLastRow();
+			setNewRowAdded(false);
+		}
+	}, [data, newRowAdded]);
+
+
+	const [editableRow, setEditableRow] = useState(null);
+
+	useEffect(() => {
+		if (newRowAdded) {
+			setEditableRow(data.length - 1);
+			setNewRowAdded(false);
+		}
+	}, [data, newRowAdded]);
+
 	const payment = 100;
 
 	 // Function to add a new row to the table
@@ -51,7 +77,22 @@ const Table2 = () => {
 			totalInterestPaid: data.length * 10, // Example calculation
 		};
 
-		setData([...data, newRow]); // Update state with new row added
+		setData(prevData => {
+			const newData = [...prevData, newRow];
+			setNewRowAdded(true);
+			return newData;
+		});
+	};
+
+	const handleMonthlyPaymentChange = (index, value) => {
+		const updatedData = data.map((row, rowIndex) => {
+			if (rowIndex === index) {
+				return { ...row, monthlyPayment: value };
+			}
+			return row;
+		});
+		console.log ("updatedData: ", updatedData);
+		setData(updatedData);
 	};
 
 
@@ -62,9 +103,22 @@ const Table2 = () => {
 		return data[data.length - 1];
 	};
 
+	
+
+	const input2ndtoLastRow = () => {
+		const table = tableRef.current;
+		console.log("working");
+
+		if (table) {
+			console.log ("table here");
+			const rows = table.getElementsByTagName('tr');
+			const secondToLastRow = rows[rows.length-1];
+			console.log("second to last row: ", secondToLastRow); // You can do whatever you need with the second-to-last row here
+		}
+	};
 
 	return (
-		<table>
+		<table ref={tableRef}>
 		<thead>
 		<tr>
 			<th>Month</th>
@@ -79,12 +133,31 @@ const Table2 = () => {
 		{data.map((row, index) => (
 			<tr key={index}>
 			<td>{row.month}</td>
-			<td>{row.monthlyPayment}</td>
+			<td>
+			{editableRow === index ? (
+				<input
+					type="text"
+					value={row.monthlyPayment}
+					onChange={(e) => handleMonthlyPaymentChange(index, e.target.value)}
+				/>
+			) : (
+				row.monthlyPayment
+			)}
+			</td>
 			<td>{row.interestPaid}</td>
 			<td>{row.principalPaid}</td>
 			<td>{row.remainingBalance}</td>
 			<td>{row.totalInterestPaid}</td>
 			</tr>
+
+			// <tr key={index}>
+			// <td>{row.month}</td>
+			// <td>{row.monthlyPayment}</td>
+			// <td>{row.interestPaid}</td>
+			// <td>{row.principalPaid}</td>
+			// <td>{row.remainingBalance}</td>
+			// <td>{row.totalInterestPaid}</td>
+			// </tr>
 		))}
 		<td idName={styles.lastRow} className={styles.rowButton} colSpan="6" > 
 			<button onClick={handleAddRow} id={styles.addButton}> + </button> 
