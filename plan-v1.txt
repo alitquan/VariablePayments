@@ -1,0 +1,55 @@
+Sprint Ideas
+
+Ideas discussed in first meeting:
+-- cache to save for now
+-- later: login, database
+-- query selector can be used for retrieving data from tables 
+-- start up page is the most important
+-- theme is important and has to be modular (easy to change)
+	- define themes using CSS variables
+	- refer to variables in the classes 
+
+
+
+Features we have to incorporate: 
+-- start up page flow
+-- mathematical calculations: 
+		- loan, principal, interest
+		- daily interest 
+		- per payment: amount paid on principal and amount on interest
+		- interest gained between payments (do we show this on graph)
+-- data analytics:
+		- graphing the data: total current loan, total interest paid, principal remaining 
+		- projections: maybe use a dotted line 
+-- cool front-end effects: 
+		- gradients on the page
+		- lines appearing on the graph one-by-one, rendering slowly
+
+
+We need to discuss:
+	-- UI Components: somebody has to draw them up
+	-- tabling structure: somebody has to draw them up  
+	-- can we work with multiple loans ?? -- think about storage and UI 
+	-- sprints: 
+			- format --     Sprint Number 	 | Ali's Feature | Jibran's Feature | Tanjim's Feature | 
+			- we need to think about the order that we do things
+			- us working on seperate React components may help 
+			- maybe- 
+				SPRINT 1
+				Person A. front-end and caching data -- use dummy data to see how it works 
+				Person B. storing different loans creating tables and making calculations 
+				Person C. creating graphs -- use dummy data 
+
+				meeting: explain how to use each other's stuff. We can discord livestream. 
+
+				SPRINT 2 
+				Person A. positioning the tables and graphs UI wise -- can use dummy data 
+				Person B. reading data from cache 
+				Person C. integration and styling graphs, creating backend 
+
+				meeting 
+
+
+
+
+
