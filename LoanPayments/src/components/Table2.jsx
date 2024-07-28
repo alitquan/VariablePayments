@@ -6,18 +6,21 @@ import {
   variableMonthlyPayments,
 } from "../calculation.js";
 
-const initialData = [
-  {
-    month: 0,
-    monthlyPayment: 0,
-    interestPaid: 0,
-    principalPaid: 0,
-    remainingBalance: 1000,
-    totalInterestPaid: 0,
-  },
-];
+const Table2 = ({ formData = {} }) => {
+  const { amountDue = "", apr = "" } = formData;
 
-const Table2 = () => {
+  const initialData = [
+    {
+      month: 0,
+      monthlyPayment: 0,
+      interestPaid: 0,
+      principalPaid: 0,
+      remainingBalance: amountDue,
+      totalInterestPaid: 0,
+      apr: apr,
+    },
+  ];
+
   const [data, setData] = useState(initialData);
 
   // reference to the table itself
