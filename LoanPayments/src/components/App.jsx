@@ -125,7 +125,9 @@ function App() {
         </button>
         {showTable && <Table1 formData={formData} />}
       </div>
+      <Table2 />
     </>
+    
   );
 }
 
