@@ -1,19 +1,16 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styles from './Table.module.css';
-import { variableMonthlyPayments } from '../calculation.js';
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import styles from "./Table.module.css";
+import {
+  fixedMonthlyPayments,
+  variableMonthlyPayments,
+} from "../calculation.js";
 
-const initialData = [
-  {
-    month: 0,
-    monthlyPayment: 0,
-    interestPaid: 0, 
-    principalPaid: 0,
-    remainingBalance: 1000,
-    totalInterestPaid: 0,
-  },
-];
+const Table2 = ({ formData = {} }) => {
+  const { amountDue = "", apr = "" } = formData;
 
-const Table2 = () => {
+  
+  
   const [data, setData] = useState(initialData);
   const [error, setError] = useState('');
   const [newRowAdded, setNewRowAdded] = useState(false);
@@ -22,7 +19,28 @@ const Table2 = () => {
   const tableRef = useRef(null);
   const inputRefs = useRef([]);
 
-  // Add new row when the data changes
+  const initialData = [
+    {
+      month: 0,
+      monthlyPayment: 0,
+      interestPaid: 0,
+      principalPaid: 0,
+      remainingBalance: amountDue,
+      totalInterestPaid: 0,
+      apr: apr,
+    },
+  ];
+
+  const [data, setData] = useState(initialData);
+
+  // reference to the table itself
+  const tableRef = useRef(null);
+  useEffect(() => {
+    const table = tableRef.current;
+    console.log(table); // This should log the table element after the component has mounted
+  }, []);
+  const [newRowAdded, setNewRowAdded] = useState(false);
+  
   useEffect(() => {
     if (newRowAdded) {
       input2ndtoLastRow();
@@ -30,7 +48,7 @@ const Table2 = () => {
     }
   }, [data, newRowAdded]);
 
-  // Handle clicks outside to exit edit mode
+   // Handle clicks outside to exit edit mode
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (inputRefs.current && !inputRefs.current.some(ref => ref && ref.contains(event.target))) {
@@ -44,20 +62,47 @@ const Table2 = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+  
+  useEffect(() => {
+    if (newRowAdded) {
+      setEditableRow(data.length - 1);
+      setNewRowAdded(false);
+    }
+  }, [data, newRowAdded]);
 
+  const payment = 100;
+
+  // Function to add a new row to the table
   const handleAddRow = () => {
     const prevRow = getMostRecentRow();
-    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], 5, 100));
+    console.log("Prev Row: ", prevRow);
+    const calculations = JSON.parse(
+      variableMonthlyPayments(prevRow["remainingBalance"], 5, payment)
+    );
+
+    console.log("calculations", calculations[0]);
+    console.log(
+      "calculations - interest paid",
+      calculations[0]["interestPaid"]
+    );
+    // Convert values to numbers for calculations
+    const interestPaidNum = parseFloat(calculations[0]["interestPaid"]);
+    const principalPaidNum = parseFloat(calculations[0]["principalPaid"]);
+    const remainingBalanceNum = parseFloat(calculations[0]["remainingBalance"]);
+    const totalInterestPaidNum = parseFloat(
+      calculations[0]["totalInterestPaid"]
+    );
     const newRow = {
       month: data.length,
-      monthlyPayment: 100,
-      interestPaid: parseFloat(calculations[0]["interestPaid"]),
-      principalPaid: parseFloat(calculations[0]["principalPaid"]),
-      remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
-      totalInterestPaid: data.length * 10,
+      monthlyPayment: payment,
+      interestPaid: interestPaidNum,
+      principalPaid: principalPaidNum,
+      remainingBalance: remainingBalanceNum, // Example calculation
+      totalInterestPaid: data.length * 10, // Example calculation
     };
 
-    setData(prevData => {
+    setData((prevData) => {
+
       const newData = [...prevData, newRow];
       setNewRowAdded(true);
       return newData;
@@ -65,6 +110,7 @@ const Table2 = () => {
   };
 
   const handleMonthlyPaymentChange = (index, value) => {
+
     if (value === '' || isNaN(value)) {
       setError('Monthly payment cannot be empty or non-numeric');
     } else if (parseFloat(value) < 0) {
@@ -88,8 +134,6 @@ const Table2 = () => {
     }
   };
 
-  const getMostRecentRow = () => {
-    return data.length ? data[data.length - 1] : null;
   };
 
   const input2ndtoLastRow = () => {
@@ -108,6 +152,7 @@ const Table2 = () => {
       setEditableRow(null);
     } else {
       setEditableRow(index);
+
     }
   };
 
@@ -145,6 +190,7 @@ const Table2 = () => {
                   />
                   {error && <div className={styles.printedError}>{error}</div>}
                 </>
+
               ) : (
                 row.monthlyPayment
               )}
@@ -160,6 +206,7 @@ const Table2 = () => {
             <button onClick={handleAddRow} id={styles.addButton}> + </button>
           </td>
         </tr>
+
       </tbody>
     </table>
   );
