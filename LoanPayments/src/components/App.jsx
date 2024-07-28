@@ -61,7 +61,7 @@ function App() {
 
   return (
     <>
-      <h1>Credit Card Calculator</h1>
+      <h1>Interest Tracker</h1>
       <div className="container">
         <div className="input-amount">
           <h2>Amount Due </h2>
