@@ -199,8 +199,17 @@ const Table2 = ( { formData = {} }) => {
   const totalPayments = calculateTotalPayments();
 
   const calculateExcess = () => {
+    const lastRow = getMostRecentRow();
+    const secondToLastRow = getSecondtoLastRow();
+    console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
+    console.log ("calc tot pay lastRow: ", lastRow); 
+    const excess = lastRow["monthlyPayment"] - secondToLastRow["remainingBalance"];
+    console.log ("Excess: ", excess);
+    return excess;
 
-  }
+  };
+  
+  const excess = calculateExcess();
 
 
  // determines if button should be shown based on remaining balance
@@ -261,8 +270,12 @@ const Table2 = ( { formData = {} }) => {
 	    {getMostRecentRow().remainingBalance <= 0 ? (
 	     <div>
                 <div className={styles.loanPaidOffMessage}>Loan has been paid off</div>
+
+		<div className={styles.excessMessage}>
+                  Excluding the excess of : ${excess.toFixed(2)} ,
+		</div> 
 	  	<div className={styles.totalPaymentsMessage}>
-                  Total Payments Made: ${totalPayments.toFixed(2)}
+                  Total Payments Made Were: ${totalPayments.toFixed(2)}
                 </div>
 	     </div>
             ) : (
