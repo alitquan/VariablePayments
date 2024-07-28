@@ -18,7 +18,7 @@ const Table2 = ( { formData = {} }) => {
     principalPaid: 0,
     remainingBalance: formData["amountDue"],
     totalInterestPaid: 0,
-    initalAPR: formData["apr"],
+    initalAPR: formData["apr"] || 0,
   },
  ];
   const { amountDue = "", apr = "" } = formData;
@@ -98,7 +98,7 @@ const Table2 = ( { formData = {} }) => {
     const numberValue = parseFloat(newValue);
     const _apr = parseFloat(formData["apr"]); 
     const prevRow = getSecondtoLastRow(); 
-    const prevBalance = prevRow['remainingBalance'];
+    const prevBalance = prevRow ? prevRow['remainingBalance'] : 0;
 
     console.log("Handle Monthly Payment Change prevBalance: ", prevBalance);	   
 
@@ -144,16 +144,22 @@ const Table2 = ( { formData = {} }) => {
     
   };
 
+  // const getMostRecentRow = () => {
+  //   console.log("getMostRecentRow -- all data: ",data);
+  //   return data.length ? data[data.length - 1] : null;
+  // };
+
+  // const getSecondtoLastRow = () => {
+  //   console.log("This is second to last row: ", data[data.length - 2])
+  //   return data.length > 2 ? data [data.length - 2]: getMostRecentRow; 	 
+  // };
   const getMostRecentRow = () => {
-    console.log("getMostRecentRow -- all data: ",data);
     return data.length ? data[data.length - 1] : null;
   };
 
   const getSecondtoLastRow = () => {
-    console.log("This is second to last row: ", data[data.length - 2])
-    return data.length > 2 ? data [data.length - 2]: getMostRecentRow; 	 
+    return data.length > 1 ? data[data.length - 2] : getMostRecentRow();
   };
-   
    
 
   const input2ndtoLastRow = () => {
