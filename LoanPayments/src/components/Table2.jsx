@@ -187,11 +187,20 @@ const Table2 = ( { formData = {} }) => {
  // Calculate total payments
   const calculateTotalPayments = () => {
     const lastRow = getMostRecentRow();
-    console.log ("calc tot pay lastRow: ", lastRow);
-    return data.reduce((total, row) => total + parseFloat(row.monthlyPayment || 0), 0);
+    const secondToLastRow = getSecondtoLastRow();
+    console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
+    console.log ("calc tot pay lastRow: ", lastRow); 
+    const excess = lastRow["monthlyPayment"] - secondToLastRow["remainingBalance"];
+    console.log ("Excess: ", excess);
+
+    return data.reduce((total, row) => total + parseFloat(row.monthlyPayment || 0), 0) - excess;
   };
 
   const totalPayments = calculateTotalPayments();
+
+  const calculateExcess = () => {
+
+  }
 
 
  // determines if button should be shown based on remaining balance
