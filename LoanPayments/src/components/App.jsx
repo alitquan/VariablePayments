@@ -3,7 +3,6 @@ import "./App.css";
 import Table2 from "./Table2.jsx";
 import Table1 from "./Table.jsx"; // Ensure this path is correct
 
-
 function App() {
   const [isOpen, setIsOpen] = useState(false); // used for dropdown
   const [selectedOption, setSelectedOption] = useState(null); // used for dropdown
@@ -113,22 +112,7 @@ function App() {
           )}
           {selectedOption === "Pick Amount Month by Month" && (
             <div className="input-container-2">
-              <h2>Month</h2>
-              <input
-                type="text"
-                name="month"
-                placeholder="Enter the month"
-                value={formData.month}
-                onChange={handleInputChange}
-              />
-              <h2>Month Amount</h2>
-              <input
-                type="text"
-                name="inputValue"
-                placeholder="Enter amount"
-                value={formData.inputValue}
-                onChange={handleInputChange}
-              />
+              <Table2 formData={formData} />
             </div>
           )}
         </div>
