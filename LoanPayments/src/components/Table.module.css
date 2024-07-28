@@ -56,3 +56,9 @@ tbody tr:nth-child(even) {
   }
  
 }
+
+.printedError {
+	color: black;
+	font-size: 10px;
+
+}

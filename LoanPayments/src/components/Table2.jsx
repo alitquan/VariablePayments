@@ -94,23 +94,38 @@ const Table2 = ( { formData = {} }) => {
   };
 
   const handleMonthlyPaymentChange = (index, value) => {
+    const newValue = value === '' ? '0' : value;
+    const numberValue = parseFloat(newValue);
+    const _apr = parseFloat(formData["apr"]); 
+    const prevRow = getSecondtoLastRow(); 
+    const prevBalance = prevRow['remainingBalance'];
 
-    const _apr = parseFloat(formData["apr"]);
-   
+    console.log("Handle Monthly Payment Change prevBalance: ", prevBalance);	   
 
-    if (value === '' || isNaN(value)) {
-      console.log("test");
-    } else if (parseFloat(value) < 0) {
-      console.log("test");
-    } else {
+    // Check if the value is a valid number and not negative
+    if (isNaN(numberValue) || numberValue < 0) {
+       setError('Monthly payment must be a positive number');
+       return; // Exit if the value is invalid
+    }
+    if ( numberValue > prevBalance ) {
+	setError("Don't overpay");
+	return;
+    }
+    // Always use the last row for calculations
+    const lastRow = getMostRecentRow();
+    if (!lastRow) {
+        return;
+    }
 
-      setError('');
+    // Clear error if value is valid
+    setError('');
+
       const updatedData = data.map((row, rowIndex) => {
         if (rowIndex === index) {
 
           const prevRow = getMostRecentRow();
 	  console.log("handleMonthly -- prevRow: ", prevRow);
-          const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, value));
+          const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, value));
           const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
           const _prevInterest =  prevRow["totalInterestPaid"];
           const totalInterest =  _prevInterest + _interestPaid;
@@ -120,18 +135,23 @@ const Table2 = ( { formData = {} }) => {
             interestPaid: parseFloat(calculations[0]["interestPaid"]),
             principalPaid: parseFloat(calculations[0]["principalPaid"]),
             remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
-
       	    totalInterestPaid: parseFloat(totalInterest.toFixed(2)),
           };
         }
         return row;
       });
       setData(updatedData);
-    }
+    
   };
 
   const getMostRecentRow = () => {
+    console.log("getMostRecentRow -- all data: ",data);
     return data.length ? data[data.length - 1] : null;
+  };
+
+  const getSecondtoLastRow = () => {
+    console.log("This is second to last row: ", data[data.length - 2])
+    return data.length > 2 ? data [data.length - 2]: getMostRecentRow; 	 
   };
    
    
