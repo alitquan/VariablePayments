@@ -58,7 +58,15 @@ tbody tr:nth-child(even) {
 }
 
 .printedError {
-	color: black;
+	color: red;
 	font-size: 10px;
 
+}
+
+.loanPaidOffMessage {
+	color: black;
+}
+
+.totalPaymentsMessage {
+	color: black;
 }

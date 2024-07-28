@@ -108,7 +108,7 @@ const Table2 = ( { formData = {} }) => {
        return; // Exit if the value is invalid
     }
     if ( numberValue > prevBalance ) {
-	setError("Don't overpay");
+	setError("Refrain from overpaying");
 	return;
     }
     // Always use the last row for calculations
@@ -177,6 +177,17 @@ const Table2 = ( { formData = {} }) => {
     }
   };
 
+
+ // Calculate total payments
+  const calculateTotalPayments = () => {
+    const lastRow = getMostRecentRow();
+    console.log ("calc tot pay lastRow: ", lastRow);
+    return data.reduce((total, row) => total + parseFloat(row.monthlyPayment || 0), 0);
+  };
+
+  const totalPayments = calculateTotalPayments();
+
+
  // determines if button should be shown based on remaining balance
   const shouldShowAddButton = () => {
     const lastRow = getMostRecentRow();
@@ -231,9 +242,18 @@ const Table2 = ( { formData = {} }) => {
         <tr>
 
           <td className={styles.rowButton} colSpan="6">
-          {
+
+	    {getMostRecentRow().remainingBalance <= 0 ? (
+	     <div>
+                <div className={styles.loanPaidOffMessage}>Loan has been paid off</div>
+	  	<div className={styles.totalPaymentsMessage}>
+                  Total Payments Made: ${totalPayments.toFixed(2)}
+                </div>
+	     </div>
+            ) : (
               <button onClick={handleAddRow} id={styles.addButton}> + </button>
-	  }
+            )}
+
           </td>
         </tr>
 
