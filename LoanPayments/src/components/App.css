@@ -13,6 +13,7 @@ h1,
 h2 {
   font-weight: bolder;
   color: whitesmoke;
+  font-family: "Montserrat", sans-serif;
 }
 
 .input-type {
@@ -39,6 +40,7 @@ h2 {
   justify-content: center;
   align-items: center;
   background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
+  border-radius: 12px;
 }
 
 Menu container styling */ .dropdown-menu {
@@ -54,6 +56,8 @@ Menu container styling */ .dropdown-menu {
   margin: 5px 0 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   z-index: 1;
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
 }
 
 .dropdown-item {
@@ -61,6 +65,8 @@ Menu container styling */ .dropdown-menu {
   cursor: pointer;
   font-size: 16px;
   list-style: none;
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
 }
 
 .dropdown-item:hover {
@@ -77,6 +83,7 @@ Menu container styling */ .dropdown-menu {
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
+  border-radius: 12px;
 }
 
 input[type="text"] {
@@ -88,6 +95,8 @@ input[type="text"] {
   transition: border-color 0.3s;
   background-color: white;
   color: cornflowerblue;
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
 }
 
 input[type="text"]:focus {
@@ -100,6 +109,8 @@ input[type="text"]:focus {
   margin-top: 30px;
   background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
   width: 100%;
+  border-radius: 12px;
+  font-family: "Montserrat", sans-serif;
 }
 .reset-btn {
 }

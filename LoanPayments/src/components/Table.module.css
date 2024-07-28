@@ -3,12 +3,10 @@
   --colorAli3: cornflowerblue;
 }
 
-
 table tbody tr:nth-last-child(1),
 table tbody tr:nth-last-child(2) {
   background-color: lightcoral; /* Or any color you want */
 }
-
 
 table {
   width: 100%;
@@ -16,15 +14,15 @@ table {
   margin: 20px 0;
   font-size: 18px;
   text-align: left;
-  color: black;
+  color: white;
 }
 
 th,
 td {
   border: 1px solid var(--colorAli2);
   padding: 8px;
+  font-family: "Montserrat", sans-serif;
 }
-
 
 th {
   background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
@@ -34,20 +32,45 @@ tbody tr:nth-child(even) {
   background-color: var(--colorAli3);
 }
 
-
-.rowButton{
+.rowButton {
   background-color: lightblue;
   text-align: center;
   padding: 5px 0;
 
-  
   button {
+    margin: 0 auto;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #6f86d6;
+  }
+  p {
 	  margin: 0 auto;
-	  height: 30px;
+	  height: 50px;
+	  font-size: 20px;
 	  display: flex;
 	  align-items: center;
 	  justify-content: center;
-	  background-color: #6f86d6;
+	  background-color: var(--colorAli2);
   }
+ 
 }
 
+.printedError {
+	color: red;
+	font-size: 10px;
+
+}
+
+.loanPaidOffMessage {
+	color: black;
+}
+
+.totalPaymentsMessage {
+	color: black;
+}
+
+.excessMessage {
+	color:black;
+}
