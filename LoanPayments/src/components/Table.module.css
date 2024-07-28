@@ -5,7 +5,7 @@
 
 table tbody tr:nth-last-child(1),
 table tbody tr:nth-last-child(2) {
-  background-color: white; /* Or any color you want */
+  background-color: lightcoral; /* Or any color you want */
 }
 
 table {
