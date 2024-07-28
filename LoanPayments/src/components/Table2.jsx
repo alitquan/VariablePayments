@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useState, useRef, useEffect } from "react";
 import styles from "./Table.module.css";
@@ -7,20 +6,22 @@ import {
   variableMonthlyPayments,
 } from "../calculation.js";
 
-const initialData = [
+
+const Table2 = ( { formData = {} }) => {
+
+
+ const initialData = [
   {
     month: 0,
-    monthlyPayment: 0,
-
+    monthlyPayment: 5,
     interestPaid: 0, 
-
     principalPaid: 0,
-    remainingBalance: 1000,
+    remainingBalance: formData["amountDue"],
     totalInterestPaid: 0,
+    initalAPR: formData["apr"],
   },
-];
-
-const Table2 = () => {
+ ];
+  const { amountDue = "", apr = "" } = formData;
   const [data, setData] = useState(initialData);
 
   const [error, setError] = useState('');
@@ -29,7 +30,16 @@ const Table2 = () => {
   
   const tableRef = useRef(null);
   const inputRefs = useRef([]);
+  
 
+  useEffect(() => {
+   // console.log("formData on render:", formData);
+   // console.log("APR: ",formData["apr"]);
+   // console.log("type of data: ", typeof formData["apr"]);
+   const apr = parseFloat(formData["apr"])
+   // console.log("stored APR: ", apr);
+   // console.log("type of data: ", typeof apr);
+  }, [formData]);
 
   useEffect(() => {
     if (newRowAdded) {
@@ -55,14 +65,24 @@ const Table2 = () => {
 
   const handleAddRow = () => {
     const prevRow = getMostRecentRow();
-    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], 5, 100));
+    const _apr = parseFloat(formData["apr"]);
+    console.log ("Detected APR: ", _apr);
+    console.log ("HandleAddRow -- Previous Row: ", prevRow);
+    console.log ("HandleAddRow -- Previous Row Interest Rate: ", prevRow["totalInterestPaid"]);
+    const _prevPayment = prevRow ["monthlyPayment"];
+    const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, _prevPayment));
+    const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
+    const _prevInterest =  prevRow["totalInterestPaid"];
+    const totalInterest =  _prevInterest + _interestPaid;
+    
     const newRow = {
       month: data.length,
-      monthlyPayment: 100,
-      interestPaid: parseFloat(calculations[0]["interestPaid"]),
+      monthlyPayment: _prevPayment,
+      interestPaid: _interestPaid,
       principalPaid: parseFloat(calculations[0]["principalPaid"]),
       remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
-      totalInterestPaid: data.length * 10,
+      totalInterestPaid: parseFloat(totalInterest.toFixed(2)),
+
     };
 
     setData(prevData => {
@@ -74,21 +94,34 @@ const Table2 = () => {
   };
 
   const handleMonthlyPaymentChange = (index, value) => {
+
+    const _apr = parseFloat(formData["apr"]);
+   
+
     if (value === '' || isNaN(value)) {
-      setError('Monthly payment cannot be empty or non-numeric');
+      console.log("test");
     } else if (parseFloat(value) < 0) {
-      setError('Monthly payment cannot be negative');
+      console.log("test");
     } else {
+
       setError('');
       const updatedData = data.map((row, rowIndex) => {
         if (rowIndex === index) {
-          const calculations = JSON.parse(variableMonthlyPayments(row['remainingBalance'], 5, value));
+
+          const prevRow = getMostRecentRow();
+	  console.log("handleMonthly -- prevRow: ", prevRow);
+          const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, value));
+          const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
+          const _prevInterest =  prevRow["totalInterestPaid"];
+          const totalInterest =  _prevInterest + _interestPaid;
           return { 
             ...row, 
             monthlyPayment: value,
             interestPaid: parseFloat(calculations[0]["interestPaid"]),
             principalPaid: parseFloat(calculations[0]["principalPaid"]),
             remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
+
+      	    totalInterestPaid: parseFloat(totalInterest.toFixed(2)),
           };
         }
         return row;
@@ -99,8 +132,9 @@ const Table2 = () => {
 
   const getMostRecentRow = () => {
     return data.length ? data[data.length - 1] : null;
-
   };
+   
+   
 
   const input2ndtoLastRow = () => {
     const table = tableRef.current;
@@ -121,6 +155,12 @@ const Table2 = () => {
       setEditableRow(index);
 
     }
+  };
+
+ // determines if button should be shown based on remaining balance
+  const shouldShowAddButton = () => {
+    const lastRow = getMostRecentRow();
+    return lastRow && lastRow.remainingBalance > 0;
   };
 
   return (
@@ -169,8 +209,11 @@ const Table2 = () => {
           </tr>
         ))}
         <tr>
-          <td idName={styles.lastRow} className={styles.rowButton} colSpan="6">
-            <button onClick={handleAddRow} id={styles.addButton}> + </button>
+
+          <td className={styles.rowButton} colSpan="6">
+          {
+              <button onClick={handleAddRow} id={styles.addButton}> + </button>
+	  }
           </td>
         </tr>
 
