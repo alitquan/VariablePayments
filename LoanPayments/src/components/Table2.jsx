@@ -1,12 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import styles from './Table.module.css';
-import { variableMonthlyPayments } from '../calculation.js';
+
+import React from "react";
+import { useState, useRef, useEffect } from "react";
+import styles from "./Table.module.css";
+import {
+  fixedMonthlyPayments,
+  variableMonthlyPayments,
+} from "../calculation.js";
 
 const initialData = [
   {
     month: 0,
     monthlyPayment: 0,
+
     interestPaid: 0, 
+
     principalPaid: 0,
     remainingBalance: 1000,
     totalInterestPaid: 0,
@@ -15,6 +22,7 @@ const initialData = [
 
 const Table2 = () => {
   const [data, setData] = useState(initialData);
+
   const [error, setError] = useState('');
   const [newRowAdded, setNewRowAdded] = useState(false);
   const [editableRow, setEditableRow] = useState(null);
@@ -22,7 +30,7 @@ const Table2 = () => {
   const tableRef = useRef(null);
   const inputRefs = useRef([]);
 
-  // Add new row when the data changes
+
   useEffect(() => {
     if (newRowAdded) {
       input2ndtoLastRow();
@@ -58,6 +66,7 @@ const Table2 = () => {
     };
 
     setData(prevData => {
+
       const newData = [...prevData, newRow];
       setNewRowAdded(true);
       return newData;
@@ -90,10 +99,12 @@ const Table2 = () => {
 
   const getMostRecentRow = () => {
     return data.length ? data[data.length - 1] : null;
+
   };
 
   const input2ndtoLastRow = () => {
     const table = tableRef.current;
+
     if (table) {
       const rows = table.getElementsByTagName('tr');
       const secondToLastRow = rows[rows.length - 2];
@@ -108,6 +119,7 @@ const Table2 = () => {
       setEditableRow(null);
     } else {
       setEditableRow(index);
+
     }
   };
 
@@ -145,6 +157,7 @@ const Table2 = () => {
                   />
                   {error && <div className={styles.printedError}>{error}</div>}
                 </>
+
               ) : (
                 row.monthlyPayment
               )}
@@ -160,6 +173,7 @@ const Table2 = () => {
             <button onClick={handleAddRow} id={styles.addButton}> + </button>
           </td>
         </tr>
+
       </tbody>
     </table>
   );
