@@ -1,6 +1,6 @@
 :root {
   --colorAli2: #062a64;
-  --colorAli3: darkblue;
+  --colorAli3: cornflowerblue;
 }
 
 
@@ -16,7 +16,7 @@ table {
   margin: 20px 0;
   font-size: 18px;
   text-align: left;
-  color: whitesmoke;
+  color: black;
 }
 
 th,
@@ -25,8 +25,9 @@ td {
   padding: 8px;
 }
 
+
 th {
-  background-color: var(--colorAli3);
+  background-image: linear-gradient(to top, #48c6ef 0%, #6f86d6 100%);
 }
 
 tbody tr:nth-child(even) {
@@ -35,7 +36,7 @@ tbody tr:nth-child(even) {
 
 
 .rowButton{
-  background-color: purple;
+  background-color: lightblue;
   text-align: center;
   padding: 5px 0;
 
@@ -46,6 +47,7 @@ tbody tr:nth-child(even) {
 	  display: flex;
 	  align-items: center;
 	  justify-content: center;
+	  background-color: #6f86d6;
   }
 }
 
