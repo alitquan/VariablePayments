@@ -98,88 +98,67 @@ const handleMonthlyPaymentChange = (index, value) => {
   const newValue = value === '' ? '0' : value;
   const numberValue = parseFloat(newValue);
   const _apr = parseFloat(formData["apr"]);
-  const prevRow = getSecondtoLastRow();
-  const prevBalance = prevRow ? prevRow['remainingBalance'] : 0;
 
-  console.log("Handle Monthly Payment Change prevBalance: ", prevBalance);
-  
   // Check if the value is a valid number and not negative
   if (isNaN(numberValue) || numberValue < 0) {
     setError('Monthly payment must be a positive number');
     return; // Exit if the value is invalid
   }
 
-  if (numberValue > prevBalance) {
-    setError("Refrain from overpaying");
-    return;
-  }
-
-  // Always use the last row for calculations
-  const lastRow = getMostRecentRow();
-  if (!lastRow) {
-    return;
-  }
-
-  // Clear error if value is valid
-  setError('');
-
+  // Initialize updated data array
   const updatedData = data.map((row, rowIndex) => {
     if (rowIndex === index) {
-      const prevRow = getMostRecentRow();
-      console.log();
-      console.log("data");
-      console.log(data);
-      console.log("Data Length: ", data.length);
-      if (data.length == 1 ) {
-	console.log("data is 1");
-      }
-
-      console.log("handleMonthly -- prevRow: ", prevRow);
-      
-      const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, value));
-      console.log("Calculations: ", calculations);
+      // Calculate new values for the modified row
+      const prevRow = rowIndex > 0 ? data[rowIndex - 1] : null;
+      const prevBalance = prevRow ? prevRow.remainingBalance : formData["amountDue"];
+      const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, newValue));
 
       if (!Array.isArray(calculations) || calculations.length === 0) {
         console.error("Invalid calculations returned from variableMonthlyPayments.");
         return row;
       }
 
-      var _interestPaid = parseFloat(calculations[0]["interestPaid"]);
-      const _prevInterest = prevRow["totalInterestPaid"];
-      let _principalPaid;
-      let _remainingBalance = parseFloat(calculations[0]["remainingBalance"]);
-      var _totalInterest;
-
-      // if payment doesn't cover the interest payment
-      if (numberValue >= _interestPaid) {
-        _principalPaid = parseFloat(calculations[0]["principalPaid"]);
-        _totalInterest = _prevInterest + _interestPaid;
-        console.log("Payment is enough");
-      } else {
-        _interestPaid = numberValue;
-        _principalPaid = 0;
-        _totalInterest = _prevInterest + _interestPaid;
-        _remainingBalance = _remainingBalance + _interestPaid;
-        console.log("Payment is not enough");
-      }
-
-
-	if (data.length == 1) {
-		console.log("hello")
-		_totalInterest = 0 + _interestPaid;
-	}
+      const _interestPaid = parseFloat(calculations[0]["interestPaid"]);
+      const _principalPaid = parseFloat(calculations[0]["principalPaid"]);
+      const _remainingBalance = parseFloat(calculations[0]["remainingBalance"]);
+      const _totalInterest = rowIndex === 0 ? _interestPaid : data[rowIndex - 1]["totalInterestPaid"] + _interestPaid;
 
       return { 
         ...row, 
-        monthlyPayment: value,
+        monthlyPayment: newValue,
+        interestPaid: _interestPaid, 
+        principalPaid: _principalPaid, 
+        remainingBalance: _remainingBalance, 
+        totalInterestPaid: parseFloat(_totalInterest.toFixed(2)),
+      };
+    } else if (rowIndex > index) {
+      // Update subsequent rows based on the updated previous row
+      const prevRow = data[rowIndex - 1];
+      const prevBalance = prevRow ? prevRow.remainingBalance : formData["amountDue"];
+      const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, prevRow.monthlyPayment));
+
+      if (!Array.isArray(calculations) || calculations.length === 0) {
+        console.error("Invalid calculations returned from variableMonthlyPayments.");
+        return row;
+      }
+
+      const _interestPaid = parseFloat(calculations[0]["interestPaid"]);
+      const _principalPaid = parseFloat(calculations[0]["principalPaid"]);
+      const _remainingBalance = parseFloat(calculations[0]["remainingBalance"]);
+      const _totalInterest = prevRow.totalInterestPaid + _interestPaid;
+
+      return { 
+        ...row, 
         interestPaid: _interestPaid, 
         principalPaid: _principalPaid, 
         remainingBalance: _remainingBalance, 
         totalInterestPaid: parseFloat(_totalInterest.toFixed(2)),
       };
     }
+
     return row;
   });
+
   setData(updatedData);
 };
 
