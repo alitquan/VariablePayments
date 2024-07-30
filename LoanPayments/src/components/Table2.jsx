@@ -66,9 +66,9 @@ const Table2 = ( { formData = {} }) => {
   const handleAddRow = () => {
     const prevRow = getMostRecentRow();
     const _apr = parseFloat(formData["apr"]);
-    console.log ("Detected APR: ", _apr);
-    console.log ("HandleAddRow -- Previous Row: ", prevRow);
-    console.log ("HandleAddRow -- Previous Row Interest Rate: ", prevRow["totalInterestPaid"]);
+    // console.log ("Detected APR: ", _apr);
+    // console.log ("HandleAddRow -- Previous Row: ", prevRow);
+    // console.log ("HandleAddRow -- Previous Row Interest Rate: ", prevRow["totalInterestPaid"]);
     const _prevPayment = prevRow ["monthlyPayment"];
     const calculations = JSON.parse(variableMonthlyPayments(prevRow['remainingBalance'], _apr, _prevPayment));
     const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
@@ -93,56 +93,95 @@ const Table2 = ( { formData = {} }) => {
     });
   };
 
-  const handleMonthlyPaymentChange = (index, value) => {
-    const newValue = value === '' ? '0' : value;
-    const numberValue = parseFloat(newValue);
-    const _apr = parseFloat(formData["apr"]); 
-    const prevRow = getSecondtoLastRow(); 
-    const prevBalance = prevRow ? prevRow['remainingBalance'] : 0;
 
-    console.log("Handle Monthly Payment Change prevBalance: ", prevBalance);	   
+const handleMonthlyPaymentChange = (index, value) => {
+  const newValue = value === '' ? '0' : value;
+  const numberValue = parseFloat(newValue);
+  const _apr = parseFloat(formData["apr"]);
+  const prevRow = getSecondtoLastRow();
+  const prevBalance = prevRow ? prevRow['remainingBalance'] : 0;
 
-    // Check if the value is a valid number and not negative
-    if (isNaN(numberValue) || numberValue < 0) {
-       setError('Monthly payment must be a positive number');
-       return; // Exit if the value is invalid
-    }
-    if ( numberValue > prevBalance ) {
-	setError("Refrain from overpaying");
-	return;
-    }
-    // Always use the last row for calculations
-    const lastRow = getMostRecentRow();
-    if (!lastRow) {
-        return;
-    }
+  console.log("Handle Monthly Payment Change prevBalance: ", prevBalance);
+  
+  // Check if the value is a valid number and not negative
+  if (isNaN(numberValue) || numberValue < 0) {
+    setError('Monthly payment must be a positive number');
+    return; // Exit if the value is invalid
+  }
 
-    // Clear error if value is valid
-    setError('');
+  if (numberValue > prevBalance) {
+    setError("Refrain from overpaying");
+    return;
+  }
 
-      const updatedData = data.map((row, rowIndex) => {
-        if (rowIndex === index) {
+  // Always use the last row for calculations
+  const lastRow = getMostRecentRow();
+  if (!lastRow) {
+    return;
+  }
 
-          const prevRow = getMostRecentRow();
-	  console.log("handleMonthly -- prevRow: ", prevRow);
-          const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, value));
-          const _interestPaid =  parseFloat(calculations[0]["interestPaid"]);
-          const _prevInterest =  prevRow["totalInterestPaid"];
-          const totalInterest =  _prevInterest + _interestPaid;
-          return { 
-            ...row, 
-            monthlyPayment: value,
-            interestPaid: parseFloat(calculations[0]["interestPaid"]),
-            principalPaid: parseFloat(calculations[0]["principalPaid"]),
-            remainingBalance: parseFloat(calculations[0]["remainingBalance"]),
-      	    totalInterestPaid: parseFloat(totalInterest.toFixed(2)),
-          };
-        }
+  // Clear error if value is valid
+  setError('');
+
+  const updatedData = data.map((row, rowIndex) => {
+    if (rowIndex === index) {
+      const prevRow = getMostRecentRow();
+      console.log();
+      console.log("data");
+      console.log(data);
+      console.log("Data Length: ", data.length);
+      if (data.length == 1 ) {
+	console.log("data is 1");
+      }
+
+      console.log("handleMonthly -- prevRow: ", prevRow);
+      
+      const calculations = JSON.parse(variableMonthlyPayments(prevBalance, _apr, value));
+      console.log("Calculations: ", calculations);
+
+      if (!Array.isArray(calculations) || calculations.length === 0) {
+        console.error("Invalid calculations returned from variableMonthlyPayments.");
         return row;
-      });
-      setData(updatedData);
-    
-  };
+      }
+
+      var _interestPaid = parseFloat(calculations[0]["interestPaid"]);
+      const _prevInterest = prevRow["totalInterestPaid"];
+      let _principalPaid;
+      let _remainingBalance = parseFloat(calculations[0]["remainingBalance"]);
+      var _totalInterest;
+
+      // if payment doesn't cover the interest payment
+      if (numberValue >= _interestPaid) {
+        _principalPaid = parseFloat(calculations[0]["principalPaid"]);
+        _totalInterest = _prevInterest + _interestPaid;
+        console.log("Payment is enough");
+      } else {
+        _interestPaid = numberValue;
+        _principalPaid = 0;
+        _totalInterest = _prevInterest + _interestPaid;
+        _remainingBalance = _remainingBalance + _interestPaid;
+        console.log("Payment is not enough");
+      }
+
+
+	if (data.length == 1) {
+		console.log("hello")
+		_totalInterest = 0 + _interestPaid;
+	}
+
+      return { 
+        ...row, 
+        monthlyPayment: value,
+        interestPaid: _interestPaid, 
+        principalPaid: _principalPaid, 
+        remainingBalance: _remainingBalance, 
+        totalInterestPaid: parseFloat(_totalInterest.toFixed(2)),
+      };
+    }
+    return row;
+  });
+  setData(updatedData);
+};
 
   // const getMostRecentRow = () => {
   //   console.log("getMostRecentRow -- all data: ",data);
@@ -188,10 +227,10 @@ const Table2 = ( { formData = {} }) => {
   const calculateTotalPayments = () => {
     const lastRow = getMostRecentRow();
     const secondToLastRow = getSecondtoLastRow();
-    console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
-    console.log ("calc tot pay lastRow: ", lastRow); 
+    // console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
+    // console.log ("calc tot pay lastRow: ", lastRow); 
     const excess = lastRow["monthlyPayment"] - secondToLastRow["remainingBalance"];
-    console.log ("Excess: ", excess);
+    // console.log ("Excess: ", excess);
 
     return data.reduce((total, row) => total + parseFloat(row.monthlyPayment || 0), 0) - excess;
   };
@@ -201,10 +240,10 @@ const Table2 = ( { formData = {} }) => {
   const calculateExcess = () => {
     const lastRow = getMostRecentRow();
     const secondToLastRow = getSecondtoLastRow();
-    console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
-    console.log ("calc tot pay lastRow: ", lastRow); 
+    // console.log ("calc tot pay SecondToLastRow: ", secondToLastRow);
+    // console.log ("calc tot pay lastRow: ", lastRow); 
     const excess = lastRow["monthlyPayment"] - secondToLastRow["remainingBalance"];
-    console.log ("Excess: ", excess);
+    // console.log ("Excess: ", excess);
     return excess;
 
   };
